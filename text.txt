@@ -1,0 +1,4 @@
+virtualenv venv
+pip install flask flask-sqlalchemy pymysql
+
+to excute flask = crtl + f5 
