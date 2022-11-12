@@ -1,50 +1,27 @@
-import pickle as pkl 
-from flask import Flask, render_template, request, url_for, redirect
 import numpy as np
+from flask import Flask, request, jsonify, render_template
+import pickle
 
 app = Flask(__name__)
+model = pickle.load(open('model.pkl', 'rb'))
 
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
 
-@app.route('/predict', methods=['GET', 'POST'])
+@app.route('/predict',methods=['POST'])
 def predict():
-    team1 = str(request.args.get('list1'))
-    team2 = str(request.args.get('list2'))
+    '''
+    For rendering results on HTML GUI
+    '''
+    features = [int(x) for x in request.form.values()]
+    final_features = [np.array(features)]
+    prediction = model.predict(final_features)
 
-    toss_win = int(request.args.get('toss_winner'))
-    choose = int(request.args.get('fb'))
+    output = round(prediction[0], 1)
 
-    with open('vocab.pkl', 'rb') as f:
-        vocab = pkl.load(f)
-    with open('inv_vocab.pkl', 'rb') as f:
-        inv_vocab = pkl.load(f)
-
-    with open('model.pkl', 'rb') as f:
-        model = pkl.load(f)
-
-    cteam1 = vocab[team1]
-    cteam2 = vocab[team2]
-
-    if cteam1 == cteam2:
-        return redirect(url_for('index'))
-
-    lst = np.array([cteam1, cteam2, choose, toss_win], dtype='int32').reshape(1,-1)
-
-    prediction = model.predict(lst)
-
-    if prediction == 0:
-        team_win = team1
-
-    else:
-        team_win = team2
-
-    return render_template('predict.html', data=team_win)
-    
-
-
+    return render_template('index.html', prediction_text='Your Rating is: {}'.format(output))
 
 if __name__ == "__main__":
     app.run(debug=True)

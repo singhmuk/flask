@@ -1,82 +1,59 @@
-{%extends "base.html"%}
-{%block content%}
-<center>
-<div class="w-50 mt-5">
-    <form action="{{url_for('predict')}}" method='GET'>
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Total Data Science</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+</head>
 
-        <div class='row my-5'>
-        
-        <div class="form-group col">
-          <label for="exampleFormControlSelect1" class="text-white font-weight-bold lead">Select Team 1</label>
-          <select class="form-control" id="exampleFormControlSelect1" name='list1' required>
-            <option value="Sunrisers Hyderabad">Sunrisers Hyderabad</option>
-            <option value="Mumbai Indians">Mumbai Indians</option>
-            <option value="Gujarat Lions">Gujarat Lions</option>
-            <option value="Rising Pune Supergiant">Rising Pune Supergiant</option>
-            <option value="Royal Challengers Bangalore">Royal Challengers Bangalore</option>
-            <option value="Kolkata Knight Riders">Kolkata Knight Riders</option>
-            <option value="Delhi Daredevils">Delhi Daredevils</option>
-            <option value="Kings XI Punjab">Kings XI Punjab</option>
-            <option value="Chennai Super Kings">Chennai Super Kings</option>
-            <option value="Rajasthan Royals">Rajasthan Royals</option>
-            <option value="Deccan Chargers">Deccan Chargers</option>
-            <option value="Kochi Tuskers Kerala">Kochi Tuskers Kerala</option>
-            <option value="Pune Warriors">Pune Warriors</option>
-            <option value="Rising Pune Supergiants">Rising Pune Supergiants</option>
-            <option value="Delhi Capitals">Delhi Capitals</option>
-          </select>
-        </div>
-        
-        <div class="form-group col">
-            <label for="exampleFormControlSelect2" class="text-white font-weight-bold lead">Select Team 2</label>
-            <select class="form-control" id="exampleFormControlSelect2" name='list2' required>
-              <option value="Sunrisers Hyderabad">Sunrisers Hyderabad</option>
-              <option value="Mumbai Indians">Mumbai Indians</option>
-              <option value="Gujarat Lions">Gujarat Lions</option>
-              <option value="Rising Pune Supergiant">Rising Pune Supergiant</option>
-              <option value="Royal Challengers Bangalore">Royal Challengers Bangalore</option>
-              <option value="Kolkata Knight Riders">Kolkata Knight Riders</option>
-              <option value="Delhi Daredevils">Delhi Daredevils</option>
-              <option value="Kings XI Punjab">Kings XI Punjab</option>
-              <option value="Chennai Super Kings">Chennai Super Kings</option>
-              <option value="Rajasthan Royals">Rajasthan Royals</option>
-              <option value="Deccan Chargers">Deccan Chargers</option>
-              <option value="Kochi Tuskers Kerala">Kochi Tuskers Kerala</option>
-              <option value="Pune Warriors">Pune Warriors</option>
-              <option value="Rising Pune Supergiants">Rising Pune Supergiants</option>
-              <option value="Delhi Capitals">Delhi Capitals</option>
-            </select>
-          </div>
+<body>
 
-        </div>
+<img src=
+"https://restaurantindia.s3.ap-south-1.amazonaws.com/s3fs-public/news14109.jpg"
+         alt="zomato image", width="400", height="150", style="float:left">
 
-        
+<img src=
+https://totaldatascience.com/wp-content/uploads/2019/10/TOTAL-1.png"
+         alt="zomato image", width="200", height="70", style="float:right">
 
-          <div class="form-group my-5">
-            <label for="exampleFormControlSelect3" class="text-white font-weight-bold lead">Toss Winner</label>
-            <select class="form-control" id="exampleFormControlSelect3" name='toss_winner' required>
-                <option value="0">Team 1</option>
-                <option value="1">Team 2</option>
-            </select>
-        </div>
+<style>
+body {
+  background-image: url("https://images.pexels.com/photos/952356/pexels-photo-952356.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500");
+  background-position: 200%;
+  background-size: cover;
+}
+</style>
 
-            
-            <div class="form-check form-check-inline my-5">
-                <input class="form-check-input" type="radio" name="fb" id="inlineRadio1" value="0" required>
-                <label class="form-check-label" for="inlineRadio1" class="text-white font-weight-bold lead">bat</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="fb" id="inlineRadio2" value="1">
-                <label class="form-check-label" for="inlineRadio2" class="text-white font-weight-bold lead">field</label>
-              </div>
 
-              <br>
 
-            <input type="submit" name='btn' class='btn btn-primary btn-lg' value='Predict'>
+ <div class="login">
+	<h1>Predict Zomato Restaurant Ratings</h1>
 
-            
-          
-        
-      </form>
-    </div></center>
-{%endblock%}
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predict')}}"method="post">
+    	<input type="text" name="Online Order" placeholder="Order Online" required="required" />
+        <input type="text" name="Book Table" placeholder="Book Table" required="required" />
+		<input type="text" name="Votes" placeholder="Votes" required="required" />
+        <input type="text" name="Location" placeholder="Location" required="required" />
+        <input type="text" name="Restaurant Type" placeholder="Restaurant Type" required="required" />
+        <input type="text" name="Cuisines" placeholder="Cuisines" required="required" />
+        <input type="text" name="Cost" placeholder="Cost" required="required" />
+        <input type="text" name="Menu Item" placeholder="Menu Item" required="required" />
+
+        <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+    </form>
+
+   <br>
+   <br>
+   {{ prediction_text }}
+
+ </div>
+
+
+</body>
+</html>
