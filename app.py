@@ -1,47 +1,50 @@
-from flask import Flask,render_template,request
-import pickle
+import pickle as pkl 
+from flask import Flask, render_template, request, url_for, redirect
 import numpy as np
-
-popular_df = pickle.load(open('popular.pkl','rb'))
-pt = pickle.load(open('pt.pkl','rb'))
-books = pickle.load(open('books.pkl','rb'))
-similarity_scores = pickle.load(open('similarity_scores.pkl','rb'))
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html',
-                           book_name = list(popular_df['Book-Title'].values),
-                           author=list(popular_df['Book-Author'].values),
-                           image=list(popular_df['Image-URL-M'].values),
-                           votes=list(popular_df['num_ratings'].values),
-                           rating=list(popular_df['avg_rating'].values)
-                           )
+    return render_template('index.html')
 
-@app.route('/recommend')
-def recommend_ui():
-    return render_template('recommend.html')
 
-@app.route('/recommend_books',methods=['post'])
-def recommend():
-    user_input = request.form.get('user_input')
-    index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:5]
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    team1 = str(request.args.get('list1'))
+    team2 = str(request.args.get('list2'))
 
-    data = []
-    for i in similar_items:
-        item = []
-        temp_df = books[books['Book-Title'] == pt.index[i[0]]]
-        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Title'].values))
-        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Author'].values))
-        item.extend(list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values))
+    toss_win = int(request.args.get('toss_winner'))
+    choose = int(request.args.get('fb'))
 
-        data.append(item)
+    with open('vocab.pkl', 'rb') as f:
+        vocab = pkl.load(f)
+    with open('inv_vocab.pkl', 'rb') as f:
+        inv_vocab = pkl.load(f)
 
-    print(data)
+    with open('model.pkl', 'rb') as f:
+        model = pkl.load(f)
 
-    return render_template('recommend.html',data=data)
+    cteam1 = vocab[team1]
+    cteam2 = vocab[team2]
 
-if __name__ == '__main__':
+    if cteam1 == cteam2:
+        return redirect(url_for('index'))
+
+    lst = np.array([cteam1, cteam2, choose, toss_win], dtype='int32').reshape(1,-1)
+
+    prediction = model.predict(lst)
+
+    if prediction == 0:
+        team_win = team1
+
+    else:
+        team_win = team2
+
+    return render_template('predict.html', data=team_win)
+    
+
+
+
+if __name__ == "__main__":
     app.run(debug=True)
